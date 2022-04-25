@@ -76,6 +76,9 @@ public class RedisUtils {
         String s = redisTemplate.opsForValue().get(phone).toString();
         return s;
     }
+    public void deleteLoginValidateCodeFromRedis(String phone){
+        redisTemplate.delete(phone+RedisConstant.SENDTYPE_LOGIN);
+    }
 
 
 }
