@@ -8,7 +8,9 @@ spring:
         max-wait: -1
         max-idle: 8
         min-idle: 0
-
+  cache:
+    redis:
+      time-to-live: 1800000 #设置缓存数据的过期时间
 
   banner:
     location: banner.txt

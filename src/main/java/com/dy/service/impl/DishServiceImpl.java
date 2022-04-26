@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +75,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "DishCache",allEntries = true)
     public void saveWithFlavor(DishDto dishDto) {
 
         dishMapper.insert(dishDto);
@@ -91,13 +94,13 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //dishFlavorService.saveBatch(flavors);
         String image = dishDto.getImage();
         redisUtils.save2Db(image);
-        String key = "dish_"+dishDto.getCategoryId();
-        redisUtils.deleteDishFromRedis(key);
+
 
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "DishCache",allEntries = true)
     public void updateWithFlavor(DishDto dishDto) {
         dishMapper.updateById(dishDto);
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
@@ -111,11 +114,11 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }
         String image = dishDto.getImage();
         redisUtils.save2Db(image);
-        String key = "dish_"+dishDto.getCategoryId();
-        redisUtils.deleteDishFromRedis(key);
+
     }
 
     @Override
+    @CacheEvict(value = "DishCache",allEntries = true)
     public void updateStatusById(Long id) {
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dish::getId,id);
@@ -139,15 +142,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     //}
 
     @Override
+    @Cacheable(value = "DishCache",key = "#dish.categoryId+'_'+#dish.status")
     public R<List<DishDto>> findDishByCategoryId(Dish dish) {
         List<DishDto> dishDtoList =null;
-        String key = "dish_"+dish.getCategoryId()+"_"+dish.getStatus();
-        dishDtoList = redisUtils.getDishFromRedis(key);
-        if (dishDtoList != null){
-            return R.success(dishDtoList);
-        }
-
-
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
         queryWrapper.orderByDesc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
@@ -174,11 +171,13 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         }
 
-        redisUtils.saveDish2Redis(key,dishDtoList);
+
         return R.success(dishDtoList);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "DishCache",allEntries = true)
     public void delete(Long aLong) {
         //LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         //queryWrapper.eq(Setmeal::getId,id);
@@ -209,8 +208,6 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         if (setmealDishes != null){
             throw new CustomException("当前菜品存在关联套餐，不能删除！请先在套餐中删除菜品！");
         }
-        String key = "dish_"+dish.getCategoryId();
-        redisUtils.deleteDishFromRedis(key);
 
 
     }
