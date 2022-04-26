@@ -51,4 +51,10 @@ public interface DishService extends IService<Dish> {
      * @return
      */
     R<List<DishDto>> findDishByCategoryId(Dish dish);
+
+    /**
+     * 删除菜品
+     * @param aLong
+     */
+    void delete(Long aLong);
 }

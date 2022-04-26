@@ -73,5 +73,12 @@ public class DishController {
     public R<List<DishDto>> list(Dish dish){
         return dishService.findDishByCategoryId(dish);
     }
+    @DeleteMapping
+    public R<String> delete(Long[] id){
+        for (Long aLong : id) {
+            dishService.delete(aLong);
+        }
+        return R.success("删除菜品成功！");
+    }
 
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dy.common.R;
 import com.dy.dto.DishDto;
 import com.dy.entity.*;
+import com.dy.exception.CustomException;
 import com.dy.mapper.CategoryMapper;
 import com.dy.mapper.DishFlavorMapper;
 import com.dy.mapper.DishMapper;
@@ -90,6 +91,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //dishFlavorService.saveBatch(flavors);
         String image = dishDto.getImage();
         redisUtils.save2Db(image);
+        String key = "dish_"+dishDto.getCategoryId();
+        redisUtils.deleteDishFromRedis(key);
 
     }
 
@@ -108,6 +111,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }
         String image = dishDto.getImage();
         redisUtils.save2Db(image);
+        String key = "dish_"+dishDto.getCategoryId();
+        redisUtils.deleteDishFromRedis(key);
     }
 
     @Override
@@ -121,6 +126,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
                 dish.setStatus(0);
             }
             dishMapper.updateById(dish);
+
     }
     //@Override
     //public R<List<Dish>> findDishByCategoryId(Dish dish) {
@@ -134,12 +140,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Override
     public R<List<DishDto>> findDishByCategoryId(Dish dish) {
+        List<DishDto> dishDtoList =null;
+        String key = "dish_"+dish.getCategoryId()+"_"+dish.getStatus();
+        dishDtoList = redisUtils.getDishFromRedis(key);
+        if (dishDtoList != null){
+            return R.success(dishDtoList);
+        }
+
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
         queryWrapper.orderByDesc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> dishes = dishMapper.selectList(queryWrapper);
-        List<DishDto> dishDtoList = new ArrayList<>();
+        dishDtoList = new ArrayList<>();
 
         for (Dish dish1 : dishes) {
             DishDto dishDto = new DishDto();
@@ -161,7 +174,45 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         }
 
+        redisUtils.saveDish2Redis(key,dishDtoList);
         return R.success(dishDtoList);
+    }
+
+    @Override
+    public void delete(Long aLong) {
+        //LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        //queryWrapper.eq(Setmeal::getId,id);
+        //Setmeal setmeal = setmealMapper.selectById(id);
+        //if (setmeal.getStatus() != 0){
+        //    throw new CustomException("当前套餐为售卖状态，不能删除！");
+        //}
+        //setmealMapper.deleteById(id);
+        //LambdaQueryWrapper<SetmealDish> setmealDishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        //setmealDishLambdaQueryWrapper.eq(SetmealDish::getSetmealId,id);
+        //setmealDishMapper.delete(setmealDishLambdaQueryWrapper);
+
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dish::getId,aLong);
+        Dish dish = dishMapper.selectById(aLong);
+        if (dish.getStatus() != 0){
+            throw new CustomException("当前菜品为售卖状态，不能删除！");
+        }
+        LambdaQueryWrapper<DishFlavor> queryWrapper1 = new LambdaQueryWrapper<>();
+        queryWrapper1.eq(DishFlavor::getDishId,aLong);
+        List<DishFlavor> dishFlavors = dishFlavorMapper.selectList(queryWrapper1);
+        if (dishFlavors != null){
+            dishFlavorMapper.delete(queryWrapper1);
+        }
+        LambdaQueryWrapper<SetmealDish> queryWrapper2 = new LambdaQueryWrapper<>();
+        queryWrapper2.eq(SetmealDish::getDishId,aLong);
+        List<SetmealDish> setmealDishes = setmealDishMapper.selectList(queryWrapper2);
+        if (setmealDishes != null){
+            throw new CustomException("当前菜品存在关联套餐，不能删除！请先在套餐中删除菜品！");
+        }
+        String key = "dish_"+dish.getCategoryId();
+        redisUtils.deleteDishFromRedis(key);
+
+
     }
 
 

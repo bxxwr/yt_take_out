@@ -1,12 +1,14 @@
 package com.dy.utils;
 
 import com.dy.common.RedisConstant;
+import com.dy.dto.DishDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RunAs;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,6 +81,17 @@ public class RedisUtils {
     public void deleteLoginValidateCodeFromRedis(String phone){
         redisTemplate.delete(phone+RedisConstant.SENDTYPE_LOGIN);
     }
+    public void saveDish2Redis(String key,List<DishDto> dishDtoList){
+        redisTemplate.opsForValue().set(key,dishDtoList,60,TimeUnit.MINUTES);
+
+    }
 
 
+    public List<DishDto> getDishFromRedis(String key) {
+        return (List<DishDto>) redisTemplate.opsForValue().get(key);
+    }
+
+    public void deleteDishFromRedis(String key) {
+        redisTemplate.delete(key);
+    }
 }
