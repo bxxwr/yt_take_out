@@ -16,8 +16,8 @@
   position: absolute;
   left: 19rem;
   top: 41rem;
-  width: 28rem;
-  height: 28rem;
+  width: 30rem;
+  height: 30rem;
 }
 
 #main .divTitle {
@@ -103,6 +103,7 @@
 
 #main .divBody .divType {
   background: #f6f6f6;
+  height: 431px;
 }
 
 #main .divBody .divType ul {
@@ -140,7 +141,7 @@
   background-color: #ffffff;
   box-sizing: border-box;
   width: 100%;
-  height: 100%;
+  height: 431px;
 }
 
 #main .divBody .divMenu > div {
@@ -270,7 +271,7 @@
   border-radius: 25rem;
   box-shadow: 0rem 3rem 5rem 0rem rgba(0, 0, 0, 0.25);
   margin: 0 auto;
-  bottom: 24rem;
+  bottom: 52rem;
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
@@ -498,7 +499,7 @@
 }
 
 #main .dialogCart .divCartTitle {
-  height: 59rem;
+  height: 45rem;
   display: flex;
   line-height: 60rem;
   position: relative;
@@ -620,7 +621,7 @@
 #main .detailsDialog .divContainer {
   padding: 20rem 20rem 0 20rem;
   overflow: auto;
-  max-height: 50vh;
+  max-height: 46vh;
   overflow-y: auto;
 }
 
@@ -630,8 +631,8 @@
 }
 
 #main .detailsDialog .el-image img {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
 }
 
 #main .detailsDialog .title {

@@ -1,16 +1,22 @@
 package com.dy.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dy.common.R;
 import com.dy.dto.OrdersDto;
+import com.dy.entity.OrderDetail;
 import com.dy.entity.Orders;
+import com.dy.service.OrderDetailService;
 import com.dy.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.ws.soap.Addressing;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,6 +24,8 @@ import javax.xml.ws.soap.Addressing;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderDetailService orderDetailService;
     @PostMapping("/submit")
     public R<String> submit(@RequestBody Orders orders){
         orderService.submit(orders);
@@ -36,5 +44,54 @@ public class OrderController {
         return R.success("修改订单状态成功！");
     }
 
+    @GetMapping("/userPage")
+    public R<Page> userPage(int page,int pageSize){
+        Page pageInfo = new Page<>(page,pageSize);
+        return orderService.userPage(pageInfo);
+    }
+
+    @DeleteMapping
+    @Transactional(rollbackFor = Exception.class)
+    public R<String> deleteOrder(Long id){
+        LambdaQueryWrapper<OrderDetail> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderDetail::getOrderId,id);
+        orderDetailService.remove(queryWrapper);
+        orderService.removeById(id);
+        return R.success("删除成功！");
+    }
+
+
+    @PostMapping("/again")
+    public R<String> addOrderAgain(@RequestBody Orders orders){
+        if (orders.getId() != null){
+            return R.success("成功！");
+        }
+        return R.error("失败!");
+    }
+
+    @GetMapping("/getToDayOrder")
+    public R<Long> getToDayOrder(){
+       return orderService.countToDayOrder();
+    }
+
+    @GetMapping("/getYesDayOrder")
+    public R<Long> getYesDayOrder(){
+        return orderService.countYesDayOrder();
+    }
+
+    @GetMapping("/getOneWeekLiuShui")
+    public R<Map> getOneWeekLiuShui(){
+        return orderService.OneWeekLiuShui();
+    }
+
+    @GetMapping("/getOneWeekOrder")
+    public R<Map> getOneWeekOrder(){
+        return orderService.OneWeekOrder();
+    }
+
+    @GetMapping("/getHotSeal")
+    public R<Map> getHotSeal(){
+        return orderService.hotSeal();
+    }
 
 }

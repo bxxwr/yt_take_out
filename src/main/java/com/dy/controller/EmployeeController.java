@@ -1,8 +1,10 @@
 package com.dy.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dy.common.R;
 import com.dy.entity.Employee;
+import com.dy.entity.User;
 import com.dy.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,13 @@ public class EmployeeController {
             return R.success(employee);
         }
         return R.error("没有查询到对应员工信息");
+    }
+
+    @GetMapping("/getEmpCount")
+    public R<Long> getEmpCount(){
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        long count = employeeService.count(queryWrapper);
+        return R.success(count);
     }
 
 

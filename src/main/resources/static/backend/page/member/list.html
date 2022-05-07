@@ -45,6 +45,8 @@
         :data="tableData"
         stripe
         class="tableBox"
+        :row-class-name="tableRowClassName"
+
       >
         <el-table-column
           prop="name"
@@ -69,19 +71,19 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
+            <el-button type="primary"
               type="text"
               size="small"
-              class="blueBug"
               @click="addMemberHandle(scope.row.id)"
               :class="{notAdmin:user !== 'admin'}"
             >
               编辑
             </el-button>
             <el-button
+                    type="danger"
               type="text"
               size="small"
-              class="delBut non"
+
               @click="statusHandle(scope.row)"
               v-if="user === 'admin'"
             >
@@ -115,6 +117,7 @@
         el: '#member-app',
         data() {
           return {
+             isShow: false,
              input: '',
              counts: 0,
              page: 1,
@@ -147,6 +150,13 @@
               this.$message.error('请求出错了：' + err)
             })
           },
+          tableRowClassName({row,index}) {
+            if (row.username == 'admin') {
+              return 'hidden_box';
+            }
+            return '';
+          },
+
           handleQuery() {
             this.page = 1;
             this.init();
@@ -199,4 +209,9 @@
       })
     </script>
 </body>
+<style>
+  .el-table .hidden_box {
+    display: none;
+  }
+</style>
 </html>

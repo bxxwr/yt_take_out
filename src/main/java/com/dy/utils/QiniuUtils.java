@@ -13,6 +13,7 @@ import com.qiniu.util.Auth;
 /**
  * 七牛云工具类
  */
+
 public class QiniuUtils {
     public  static String accessKey = "6PyAMlKHDvBsq5ZzFrAGmvqk0e9ac_VI5DB5V05Y";
     public  static String secretKey = "2LUMpWVwhrW9j2I911baO-aCElUlMIYtK_vPutzL";

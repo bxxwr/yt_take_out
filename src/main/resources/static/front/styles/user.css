@@ -42,13 +42,17 @@
   height: 58rem;
   border-radius: 50%;
   margin-right: 16rem;
+
 }
 
 #user .divHead .divUser .desc {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-right: 40%;
 }
+
+
 
 #user .divHead .divUser .desc .divName {
   opacity: 1;

@@ -2,13 +2,16 @@ package com.dy.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dy.common.R;
+import com.dy.entity.Employee;
 import com.dy.entity.User;
 import com.dy.mapper.UserMapper;
 import com.dy.service.UserService;
 import com.dy.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 user.setPhone(phone);
                 userMapper.insert(user);
 
+
             }
             //3、向客户端写入Cookie，内容为用户手机号
             //Cookie cookie = new Cookie("member_login_telephone",telephone);
@@ -77,4 +81,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         return R.error("登录失败！");
     }
+
+    @Override
+    public R<String> logout() {
+
+
+        Long userId = (Long)request.getSession().getAttribute("user");
+        redisUtils.deleteUserFromRedis(userId.toString());
+        request.getSession().removeAttribute("user");
+        return R.success("退出成功！");
+    }
+
+    @Override
+    public void updateUserById(User user) {
+        userMapper.updateById(user);
+        String avatar = user.getAvatar();
+        redisUtils.save2Db(avatar);
+    }
+
+    @Override
+    public R<Page> pageQuery(Page pageInfo, String name) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotEmpty(name),User::getName,name);
+        queryWrapper.orderByDesc(User::getCreateTime);
+        userMapper.selectMapsPage(pageInfo,queryWrapper);
+        return R.success(pageInfo);
+
+    }
+
 }

@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-        <title>菩提阁</title>
+        <title>美食元素</title>
         <link rel="icon" href="./../images/favico.ico">
         <!--不同屏幕尺寸根字体设置-->
         <script src="./../js/base.js"></script>
@@ -21,7 +21,7 @@
         <div id="add_order" class="app">
             <div class="divHead">
                 <div class="divTitle">
-                    <i class="el-icon-arrow-left" @click="goBack"></i>菩提阁
+                    <i class="el-icon-arrow-left" @click="goBack"></i>美食元素
                 </div>
             </div>
             <div class="divContent">
@@ -52,7 +52,7 @@
                                 <div class="numPrice">
                                     <span class="num">x{{item.number}}</span>
                                     <div class="price">
-                                        <span class="spanMoney">￥</span>{{item.amount}}</div>
+                                        <span class="spanMoney">￥</span>{{item.amount * item.number}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -100,6 +100,8 @@
                 el:"#add_order",
                 data(){
                     return {
+                        QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
+                        imageUrl: '',
                         address:{
                             phone:'',//手机号
                             consignee:'',//姓名
@@ -202,6 +204,7 @@
                     },
                     //网络图片路径转换
                     imgPathConvert(path){
+
                         return imgPath(path)
                     },
                 }

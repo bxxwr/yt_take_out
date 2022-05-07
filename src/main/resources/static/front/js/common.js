@@ -1,7 +1,9 @@
 var web_prefix = '/front'
 
 function imgPath(path){
-    return '/common/download?name=' + path
+
+    var QiNiuYunUrl ='http://rafqqxzvc.hn-bkt.clouddn.com/'
+    return QiNiuYunUrl + path
 }
 
 //将url传参转换为数组

@@ -29,6 +29,7 @@
   transform: translate(0, -50%);
 }
 
+
 #address_edit .divContent {
   height: 100%;
   opacity: 1;
@@ -36,6 +37,12 @@
   padding-left: 9rem;
   padding-right: 9rem;
 }
+
+#address_edit .divContent > image{
+
+  margin-right: 50px;
+}
+
 
 #address_edit .divContent .divItem {
   height: 55rem;
@@ -154,3 +161,5 @@
   line-height: 36rem;
   margin-top: 20rem;
 }
+
+

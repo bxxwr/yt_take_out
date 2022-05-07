@@ -37,10 +37,12 @@
         class="tableBox"
       >
         <el-table-column
+                align="center"
           prop="name"
           label="分类名称"
         /></el-table-column>
         <el-table-column
+                align="center"
           prop="type"
           label="分类类型"
         >
@@ -49,6 +51,7 @@
           </template>
         </el-table-column>
         <el-table-column
+                align="center"
           prop="updateTime"
           label="操作时间"
         >
@@ -57,27 +60,25 @@
         </template>
         </el-table-column>
         <el-table-column
+                align="center"
           prop="sort"
           label="排序"
         /></el-table-column>
         <el-table-column
+                align="center"
           label="操作"
           width="160"
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
-              type="text"
+            <el-button type="primary"
               size="small"
-              class="blueBug"
               @click="editHandle(scope.row)"
             >
               修改
             </el-button>
-            <el-button
-              type="text"
+            <el-button type="danger"
               size="small"
-              class="delBut non"
               @click="deleteHandle(scope.row.id)"
             >
               删除

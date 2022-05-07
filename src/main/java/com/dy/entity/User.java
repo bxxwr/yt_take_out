@@ -1,5 +1,7 @@
 package com.dy.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -40,4 +42,7 @@ public class User implements Serializable {
 
     //状态 0:禁用，1:正常
     private Integer status;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
 }

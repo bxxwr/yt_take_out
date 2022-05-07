@@ -40,3 +40,10 @@ function queryEmployeeById (id) {
     method: 'get'
   })
 }
+
+const getEmpCountApi = () => {
+  return $axios({
+    url: `/employee/getEmpCount`,
+    method: 'get'
+  })
+}

@@ -11125,14 +11125,14 @@ input[type="number"] {
 }
 .el-button--primary:focus,
 .el-button--primary:hover {
-  background: #fdd24c;
-  border-color: #fdd24c;
+  background: #43b7ff;
+  border-color: #43b7ff;
   color: #333333;
 }
 .el-button--primary.is-active,
 .el-button--primary:active {
-  background: #efb602;
-  border-color: #efb602;
+  background: #49baff;
+  border-color: #49baff;
   color: #333333;
 }
 .el-button--primary:active {

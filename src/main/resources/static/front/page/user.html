@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-    <title>菩提阁</title>
+    <title>美食元素</title>
     <link rel="icon" href="./../images/favico.ico">
     <!--element-ui的样式-->
     <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css" />
@@ -19,14 +19,26 @@
     <div id="user" class="app">
         <div class="divHead">
             <div class="divTitle">
-                <i class="el-icon-arrow-left" @click="goBack"></i>个人中心
+<!--                <i class="el-icon-arrow-left" @click="goBack"></i>个人中心-->
+                <i  @click="goBack"></i>个人中心
             </div>
             <div class="divUser">
-                <img src="./../images/headPage.png"/>
+<!--                <img src="./../images/headPage.png"/>-->
+                <img
+                        v-if="imageUrl"
+                        :src="imageUrl"
+
+                />
                 <div class="desc">
-                    <div class="divName">林之迷 <img src="./../images/women.png"/></div>
+                    <div v-if="ruleForm.sex=='女'" class="divName">{{ruleForm.name}}<img src="./../images/women.png"/></div>
+                    <div v-if="ruleForm.sex=='男'" class="divName">{{ruleForm.name}}<img src="./../images/man.png"/></div>
                     <div class="divPhone">{{userPhone}}</div>
                 </div>
+
+                <div   class="desc">
+                    <el-button @click.stop.prevent="editUserInfo(item)"  type="warning" icon="el-icon-edit-outline" circle></el-button>
+                </div>
+
             </div>
         </div>
         <div class="divContent">
@@ -68,6 +80,26 @@
                 退出登录
             </div>
         </div>
+        <van-tabbar v-model="active">
+            <van-tabbar-item url="../index.html">
+                <span>点餐</span>
+                <template #icon="props">
+                    <img src="../images/order.png" />
+                </template>
+            </van-tabbar-item>
+            <van-tabbar-item url="order.html">
+                <span>订单</span>
+                <template #icon="props">
+                    <img src="../images/orderList.png" />
+                </template>
+            </van-tabbar-item>
+            <van-tabbar-item url="user.html">
+                <span>我的</span>
+                <template #icon="props">
+                    <img src="../images/my.png" />
+                </template>
+            </van-tabbar-item>
+        </van-tabbar>
     </div>
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
     <script src="../../backend/plugins/vue/vue.js"></script>
@@ -82,11 +114,24 @@
     <script src="./../js/request.js"></script>
     <script src="./../api/order.js"></script>
     <script src="./../api/login.js"></script>
+    <script src="./../api/user.js"></script>
     <script>
         new Vue({
             el:"#user",
             data(){
                 return {
+                    QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
+                    imageUrl: '',
+                    ruleForm : {
+                        'id': '',
+                        'phone': '',
+                        'sex': '男',
+                        'status': '',
+                        'avatar': '',
+                        'idNumber': '',
+
+
+                    },
                     form:{
                         phone:'',
                         code:''
@@ -106,8 +151,24 @@
             },
             computed:{},
             created(){
+
                 this.userPhone =sessionStorage.getItem("userPhone")
+                this.ruleForm.phone = sessionStorage.getItem("userPhone")
+                console.log(this.ruleForm.phone)
                 this.initData()
+                userInfoApi(this.ruleForm.phone).then(res => {
+                    console.log(res)
+                    if (String(res.code) === '1') {
+                        console.log(res.data)
+
+                        this.ruleForm = res.data
+                        this.imageUrl = this.QiNiuYunUrl + this.ruleForm.avatar;
+                        this.ruleForm.sex = res.data.sex === '0' ? '女' : '男'
+                        // this.ruleForm.password = ''
+                    } else {
+                        this.$message.error(res.msg || '操作失败')
+                    }
+                })
             },
             mounted(){},
             methods:{
@@ -124,9 +185,17 @@
                         window.location.href = '/front/page/order.html'
                     }) 
                 },
+                editUserInfo(){
+                    console.log("编辑信息")
+                    window.requestAnimationFrame(()=>{
+                        window.location.href = '/front/page/add-user.html'
+
+                    })
+                },
                 initData(){
                     this.getLatestOrder()
                 },
+
                 async getLatestOrder(){
                     const params = {
                         page:1,
@@ -187,9 +256,12 @@
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
                     }                
-                }
+                },
+
+
             }
         })
     </script>
 </body>
+
 </html>

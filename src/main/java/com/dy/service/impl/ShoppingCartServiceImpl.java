@@ -46,6 +46,7 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
             shoppingCartMapper.updateById(shoppingCart1);
         }else {
             //如果不存在，则添加到购物车，数量默认就是1
+            shoppingCart.setNumber(1);
             shoppingCartMapper.insert(shoppingCart);
             shoppingCart1 = shoppingCart;
         }

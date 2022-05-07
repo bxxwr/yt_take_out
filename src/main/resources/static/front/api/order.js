@@ -32,3 +32,28 @@ function orderAgainApi(data) {
       data
   })
 }
+
+//删除订单
+// function deleteOrderApi(params) {
+//     return $axios({
+//         'url': '/order',
+//         'method': 'delete',
+//         params
+//     })
+// }
+const deleteOrderApi = (id) => {
+    return $axios({
+        url: '/order',
+        method: 'delete',
+        params: { id }
+    })
+}
+
+// 删除地址
+// function deleteOrderApi(id) {
+//     return $axios({
+//         'url': '/order',
+//         'method': 'delete',
+//         id
+//     })
+// }

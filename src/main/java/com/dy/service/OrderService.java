@@ -6,6 +6,8 @@ import com.dy.common.R;
 import com.dy.dto.OrdersDto;
 import com.dy.entity.Orders;
 
+import java.util.Map;
+
 public interface OrderService extends IService<Orders> {
     /**
      * 用户下单
@@ -28,4 +30,41 @@ public interface OrderService extends IService<Orders> {
      * @param ordersDto
      */
     void updateStatusById(OrdersDto ordersDto);
+
+    /**
+     * 用户订单分页查询
+     * @param pageInfo
+     * @return
+     */
+    R<Page> userPage(Page pageInfo);
+
+    /**
+     * 查询今日订单量
+     * @return
+     */
+    R<Long> countToDayOrder();
+
+    /**
+     * 查询昨日订单量
+     * @return
+     */
+    R<Long> countYesDayOrder();
+
+    /**
+     * 查询近一周流水
+     * @return
+     */
+    R<Map> OneWeekLiuShui();
+
+    /**
+     * 查询近一周订单数量
+     * @return
+     */
+    R<Map> OneWeekOrder();
+
+    /**
+     * 查询热卖套餐
+     * @return
+     */
+    R<Map> hotSeal();
 }

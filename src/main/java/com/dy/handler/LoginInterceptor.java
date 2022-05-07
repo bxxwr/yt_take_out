@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         //}
         if (session.getAttribute("employee") != null && redisUtils.isEmployeeInRedis(session.getAttribute("employee").toString())){
                 log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("employee"));
+
                 return true;
         }
         if (session.getAttribute("user") != null && redisUtils.isUserInRedis(session.getAttribute("user").toString())){

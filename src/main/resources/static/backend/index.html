@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>移通外卖管理端</title>
+    <title>美食元素后台管理端</title>
     <link rel="shortcut icon" href="favicon.ico">
     <!-- 引入样式 -->
     <link rel="stylesheet" href="plugins/element-ui/index.css" />
-    <link rel="stylesheet" href="styles/common.css" />
+    <link rel="stylesheet" href="styles/common1.css" />
     <link rel="stylesheet" href="styles/index.css" />
     <link rel="stylesheet" href="styles/icon/iconfont.css" />
+    <link rel="stylesheet" href="styles/icon3/iconfont.css" />
     <style>
       .body{
         min-width: 1366px;
       }
       .app-main{
         height: calc(100% - 64px);
+
+
       }
       .app-main .divTmp{
         width: 100%;
@@ -108,54 +111,70 @@
     <script src="plugins/axios/axios.min.js"></script>
     <script src="js/request.js"></script>
     <script src="./api/login.js"></script>
+    <script src="plugins/echarts/echarts.js"></script>
     <script>
 
       new Vue({
         el: '#app',
         data() {
           return {
-            defAct: '2',
-            menuActived: '2',
+            defAct: '1',
+            menuActived: '1',
             userInfo: {},
             menuList: [
               // {
               //   id: '1',
               //   name: '门店管理',
               //   children: [
+
+
                   {
-                    id: '2',
-                    name: '员工管理',
-                    url: 'page/member/list.html',
-                    icon: 'icon-member'
+                    id:'1',
+                    name: '统计分析',
+                    url: 'page/home/home.html',
+                    icon: 'icon-yingyezonglan'
                   },
                   {
+                    id:'2',
+                    name: '会员管理',
+                    url: 'page/user/list.html',
+                    icon: 'icon-huiyuan'
+                  },
+
+                  {
                     id: '3',
-                    name: '分类管理',
-                    url: 'page/category/list.html',
-                    icon: 'icon-category'
+                    name: '员工管理',
+                    url: 'page/member/list.html',
+                    icon: 'icon-yuangongguanli'
                   },
                   {
                     id: '4',
-                    name: '菜品管理',
-                    url: 'page/food/list.html',
-                    icon: 'icon-food'
+                    name: '分类管理',
+                    url: 'page/category/list.html',
+                    icon: 'icon-siheyijinjian'
                   },
                   {
                     id: '5',
-                    name: '套餐管理',
-                    url: 'page/combo/list.html',
-                    icon: 'icon-combo'
+                    name: '菜品管理',
+                    url: 'page/food/list.html',
+                    icon: 'icon-diancai'
                   },
                   {
                     id: '6',
+                    name: '套餐管理',
+                    url: 'page/combo/list.html',
+                    icon: 'icon-tangshicaipu'
+                  },
+                  {
+                    id: '7',
                     name: '订单明细',
                     url: 'page/order/list.html',
-                    icon: 'icon-order'
+                    icon: 'icon-yingyebaogao'
                   }
               //   ],
               // },
             ],
-            iframeUrl: 'page/member/list.html',
+            iframeUrl: 'page/home/home.html',
             headTitle: '员工管理',
             goBackFlag: false,
             loading: true,

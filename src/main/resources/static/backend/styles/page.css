@@ -1,4 +1,5 @@
 .dashboard-container {
+
   padding: 20px;
 }
 .dashboard-container .container {
@@ -98,14 +99,14 @@
   width: 777px;
 }
 .flavorBox .addBut {
-  background: #ffc200;
+  background: #409eff;
   display: inline-block;
   padding: 0px 20px;
   border-radius: 3px;
   line-height: 40px;
   cursor: pointer;
   border-radius: 4px;
-  color: #333333;
+  color: #ffffff;
   font-weight: 500;
 }
 .flavorBox .flavor {

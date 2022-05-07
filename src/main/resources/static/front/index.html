@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-    <title>菩提阁</title>
+    <title>美食元素</title>
     <link rel="icon" href="images/favico.ico">
     <!--不同屏幕尺寸根字体设置-->
     <script src="./js/base.js"></script>
@@ -21,13 +21,14 @@
   <body>
     <div id="main" class="app">
       <div class="divHead">
-        <img src="./images/user.png" @click="toUserPage"/>
+
+<!--        <img src="./images/user1.png" @click="toUserPage"/>-->
       </div>
       <div class="divTitle">
         <div class="divStatic">
           <img src="./images/logo.png"  class="logo"/>
           <div class="divDesc">
-            <div class="divName">菩提阁餐厅</div>
+            <div class="divName">美食餐厅</div>
             <div class="divSend">
                 <span><img src="./images/time.png"/> 距离1.5km</span>
                 <span><img src="./images/money.png"/> 配送费6元</span>
@@ -36,7 +37,7 @@
           </div>
         </div>
         <div class="divDesc">
-          简介: 菩提阁中餐厅是菩提阁点餐的独立的品牌，定位“大众 化的美食外送餐饮”，旨为顾客打造专业美食。
+          简介: 定位“大众化的美食外送餐饮”.
         </div>
       </div>
       <div class="divBody">
@@ -59,7 +60,7 @@
                 <div class="divDesc">{{'月销' + (item.saleNum ? item.saleNum : 0)  }}</div>
                 <div class="divBottom"><span>￥</span><span>{{item.price/100}}</span></div>
                 <div class="divNum">
-                  <div class="divSubtract" v-if="item.number > 0">
+                  <div class="divSubtract" v-if="item.number >= 1">
                     <img src="./images/subtract.png" @click.prevent.stop="subtractCart(item)"/>
                   </div>
                   <div class="divDishNum">{{item.number}}</div>
@@ -88,6 +89,26 @@
           <div class="divPrice"></div>
           <div :class="{btnSubmitActive: cartData && cartData.length > 0, btnSubmit:!cartData || cartData.length<1}" @click="toAddOrderPage">去结算</div>
         </div>
+      <van-tabbar v-model="active">
+        <van-tabbar-item url="index.html">
+          <span>点餐</span>
+          <template #icon="props">
+            <img src="images/order.png" />
+          </template>
+        </van-tabbar-item>
+        <van-tabbar-item url="page/order.html">
+          <span>订单</span>
+          <template #icon="props">
+            <img src="images/orderList.png" />
+          </template>
+        </van-tabbar-item>
+        <van-tabbar-item url="page/user.html">
+          <span>我的</span>
+          <template #icon="props">
+            <img src="images/my.png" />
+          </template>
+        </van-tabbar-item>
+      </van-tabbar>
         <van-dialog v-model="dialogFlavor.show" :show-confirm-button="false" class="dialogFlavor" ref="flavorDialog">
           <div class="dialogTitle">{{dialogFlavor.name}}</div>
           <div class="divContent">
@@ -214,6 +235,7 @@
           <div class="detailsDialogClose" @click="setMealDialog.show = false">
             <img src="./images/close.png"/>
           </div>
+
         </van-dialog>
     </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
@@ -233,6 +255,12 @@
           el:'#main',
           data(){
             return {
+              active: 0,
+              icon: {
+                active: '../images/order.png',
+                inactive: 'https://img01.yzcdn.cn/vant/user-inactive.png',
+              },
+              QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
               //左边菜品类别index
               activeType:0,
               categoryList:[],
@@ -406,6 +434,7 @@
                   }
                 })
                 if(this.setMealDialog.show){
+                    console.log(res.data.number)
                   item.number = res.data.number
                 }
                 this.getCartData()
@@ -562,7 +591,8 @@
             },
             //网络图片路径转换
             imgPathConvert(path){
-              return imgPath(path)
+              return this.QiNiuYunUrl+path
+              // return imgPath(path)
             },
             //跳转到去结算界面
             toAddOrderPage(){
