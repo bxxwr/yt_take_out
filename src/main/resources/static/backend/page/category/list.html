@@ -80,6 +80,7 @@
             <el-button type="danger"
               size="small"
               @click="deleteHandle(scope.row.id)"
+                       :disabled="user === 'admin'?false:true"
             >
               删除
             </el-button>

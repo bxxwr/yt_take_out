@@ -94,6 +94,7 @@
         >
           <template slot-scope="scope">
             <el-button type="primary"
+                       :disabled="user === 'admin'?false:true"
               type="text"
               size="small"
               @click="addUserHandle(scope.row.id)"
@@ -102,6 +103,7 @@
               编辑
             </el-button>
             <el-button
+                    :disabled="user === 'admin'?false:true"
                     type="danger"
               type="text"
               size="small"

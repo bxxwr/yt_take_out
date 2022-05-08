@@ -35,6 +35,8 @@
           ></i>
         </el-input>
         <el-button
+                :disabled="user === 'admin'?false:true"
+
           type="primary"
           @click="addMemberHandle('add')"
         >
@@ -76,6 +78,7 @@
               size="small"
               @click="addMemberHandle(scope.row.id)"
               :class="{notAdmin:user !== 'admin'}"
+                       :disabled="user === 'admin'?false:true"
             >
               编辑
             </el-button>
@@ -156,6 +159,12 @@
             }
             return '';
           },
+          buttonAdmin({row,index}) {
+            if (this.user != 'admin') {
+              return 'hidden_button';
+            }
+            return '';
+          },
 
           handleQuery() {
             this.page = 1;
@@ -213,5 +222,6 @@
   .el-table .hidden_box {
     display: none;
   }
+
 </style>
 </html>
