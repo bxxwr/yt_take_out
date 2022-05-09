@@ -13,8 +13,8 @@ import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
  * 短信发送工具类
  */
 public class SMSUtils {
-	public static final String VALIDATE_CODE = "1328115";//发送短信验证码
-	public static final String ORDER_NOTICE = "1328121";//体检预约成功通知
+	public static final String VALIDATE_CODE = "你的短信模板代码";//发送短信验证码
+	public static final String ORDER_NOTICE = "你的短信模板代码";
 
 	/**
 	 * 发送短信
@@ -35,7 +35,7 @@ public class SMSUtils {
 			 * 您也可以直接在代码中写入密钥对，但需谨防泄露，不要将代码复制、上传或者分享给他人
 			 * CAM 密钥查询：https://console.cloud.tencent.com/cam/capi
 			 */
-			Credential cred = new Credential("AKIDd6JFvMVNyINAhxwe5FAoBI8i13oJXUAa", "A2ez4sQhiSv86nDLCn7AwSihPr2wZvBA");
+			Credential cred = new Credential("你的腾讯云SecretId", "你的腾讯云SecretKey");
 			HttpProfile httpProfile = new HttpProfile();
 
 			/* SDK 默认使用 POST 方法。
