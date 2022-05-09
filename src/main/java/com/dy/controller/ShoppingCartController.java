@@ -50,9 +50,12 @@ public class ShoppingCartController {
 
     @PostMapping("/sub")
     public R<ShoppingCart> changeNumber(@RequestBody ShoppingCart shoppingCart){
+        Long userId = (Long) request.getSession().getAttribute("user");
+
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(shoppingCart.getDishId() != null,ShoppingCart::getDishId,shoppingCart.getDishId());
         queryWrapper.eq(shoppingCart.getSetmealId() != null,ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
+        queryWrapper.eq(ShoppingCart::getUserId,userId);
         ShoppingCart one = shoppingCartService.getOne(queryWrapper);
         if (one.getNumber() == 1){
             shoppingCartService.removeById(one);

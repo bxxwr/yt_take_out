@@ -204,10 +204,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }
         LambdaQueryWrapper<SetmealDish> queryWrapper2 = new LambdaQueryWrapper<>();
         queryWrapper2.eq(SetmealDish::getDishId,aLong);
-        List<SetmealDish> setmealDishes = setmealDishMapper.selectList(queryWrapper2);
-        if (setmealDishes != null){
+        Long selectCount = setmealDishMapper.selectCount(queryWrapper2);
+        if (selectCount > 0 ){
             throw new CustomException("当前菜品存在关联套餐，不能删除！请先在套餐中删除菜品！");
         }
+        redisUtils.removePicFromRedis(dish.getImage());
+        dishMapper.delete(queryWrapper);
 
 
     }

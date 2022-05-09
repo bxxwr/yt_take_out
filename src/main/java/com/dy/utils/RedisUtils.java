@@ -35,6 +35,10 @@ public class RedisUtils {
         redisTemplate.opsForSet().add(RedisConstant.FOOD_PIC_RESOURCES,pic);
     }
 
+    public void removePicFromRedis(String pic){
+        redisTemplate.opsForSet().remove(RedisConstant.FOOD_PIC_DB_RESOURCES,pic);
+    }
+
     public void saveValidateCode2Redis(String phone,String code){
         redisTemplate.opsForValue().set(phone+RedisConstant.SENDTYPE_LOGIN,code.toString(),600, TimeUnit.SECONDS);
     }

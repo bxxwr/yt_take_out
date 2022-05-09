@@ -55,6 +55,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         setmealMapper.deleteById(id);
         LambdaQueryWrapper<SetmealDish> setmealDishLambdaQueryWrapper = new LambdaQueryWrapper<>();
         setmealDishLambdaQueryWrapper.eq(SetmealDish::getSetmealId,id);
+        redisUtils.removePicFromRedis(setmeal.getImage());
         setmealDishMapper.delete(setmealDishLambdaQueryWrapper);
 
     }

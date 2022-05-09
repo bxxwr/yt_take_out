@@ -120,6 +120,7 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose"
+
     >
       <div class="info-box">
         <div class="item-box">
@@ -150,6 +151,30 @@
           <span class="label">下单时间：</span>
           <span class="des">{{ diaForm.orderTime }}</span>
         </div>
+        <el-table
+                :data="orderDetails"
+                height="200"
+                border
+                style="width: 100%">
+          <el-table-column
+                  align="center"
+                  prop="name"
+                  label="商品"
+                  width="159">
+          </el-table-column>
+          <el-table-column
+                  align="center"
+                  prop="number"
+                  label="数量"
+                  width="159">
+          </el-table-column>
+          <el-table-column
+                  align="center"
+                  prop="amount"
+                  label="金额"
+                  width="159">
+          </el-table-column>
+        </el-table>
       </div>
     </el-dialog>
       <!-- <el-form ref="diaForm" :model="diaForm" class="dia-form">
@@ -201,6 +226,7 @@
              page: 1,
              pageSize: 10,
              tableData : [],
+            orderDetails: [],
              dialogVisible: false,
              diaForm: {},
              loading: false
@@ -266,6 +292,17 @@
             this.diaForm = {}
             this.dialogVisible = true
             this.diaForm = { ...row }
+
+            queryOrderDetailById(row.id).then((res)=>{
+              if (res.code === 1){
+
+                this.orderDetails = res.data
+                this.orderDetails.amount = this.orderDetails.amount * this.orderDetails.number
+
+              }
+            }).catch(err => {
+              this.$message.error('请求出错了：' + err)
+            })
           },
           // 取消，派送，完成
           cancelOrDeliveryOrComplete (status, id) {

@@ -191,6 +191,7 @@
         computed: {},
         created() {
           this.init()
+          this.user = JSON.parse(localStorage.getItem('userInfo')).username
         },
         mounted() {
         },
