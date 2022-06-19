@@ -8,13 +8,40 @@ import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
  * 短信发送工具类
  */
+@Component
 public class SMSUtils {
-	public static final String VALIDATE_CODE = "你的短信模板代码";//发送短信验证码
-	public static final String ORDER_NOTICE = "你的短信模板代码";
+
+	public static  String secretId ;
+	public static  String secretKey;
+	public static  String appID ;
+	public static  String sign ;
+	@Value("${TencentCloud.secretId}")
+	public  void setSecretId(String secretId) {
+		SMSUtils.secretId = secretId;
+	}
+	@Value("${TencentCloud.secretKey}")
+	public  void setSecretKey(String secretKey) {
+		SMSUtils.secretKey = secretKey;
+	}
+	@Value("${TencentCloud.appID}")
+	public  void setAppID(String appID) {
+		SMSUtils.appID = appID;
+	}
+	@Value("${TencentCloud.sign}")
+	public  void setSign(String sign) {
+		SMSUtils.sign = sign;
+	}
+
+	public static final String VALIDATE_CODE = "1328115";//发送短信验证码
+	public static final String ORDER_NOTICE = "1328121";//体检预约成功通知
 
 	/**
 	 * 发送短信
@@ -35,7 +62,7 @@ public class SMSUtils {
 			 * 您也可以直接在代码中写入密钥对，但需谨防泄露，不要将代码复制、上传或者分享给他人
 			 * CAM 密钥查询：https://console.cloud.tencent.com/cam/capi
 			 */
-			Credential cred = new Credential("你的腾讯云SecretId", "你的腾讯云SecretKey");
+			Credential cred = new Credential(secretId, secretKey);
 			HttpProfile httpProfile = new HttpProfile();
 
 			/* SDK 默认使用 POST 方法。
@@ -69,11 +96,11 @@ public class SMSUtils {
 			 * 短信控制台：https://console.cloud.tencent.com/smsv2
 			 * sms helper：https://cloud.tencent.com/document/product/382/3773 */
 			/* 短信应用 ID: 在 [短信控制台] 添加应用后生成的实际 SDKAppID，例如1400006666 */
-			String appid = "1400642622";
+			String appid = appID;
 			req.setSmsSdkAppid(appid);
 			/* 短信签名内容: 使用 UTF-8 编码，必须填写已审核通过的签名，可登录 [短信控制台] 查看签名信息 */
-			String sign = "DYhealth";
-			req.setSign(sign);
+			String sign1 = sign;
+			req.setSign(sign1);
 			/* 模板 ID: 必须填写已审核通过的模板 ID，可登录 [短信控制台] 查看模板 ID */
 			String templateID = templateCode;
 			req.setTemplateID(templateID);

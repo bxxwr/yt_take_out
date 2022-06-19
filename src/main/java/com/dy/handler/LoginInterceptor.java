@@ -1,12 +1,21 @@
 package com.dy.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dy.common.R;
 import com.dy.entity.Employee;
+import com.dy.entity.User;
+
+import com.dy.exception.CustomException;
 import com.dy.service.EmployeeService;
+import com.dy.service.UserService;
+
 import com.dy.utils.EmpThreadLocal;
+import com.dy.utils.JwtUtils;
 import com.dy.utils.RedisUtils;
+import com.dy.utils.UserThreadLocal;
 import com.sun.corba.se.impl.resolver.SplitLocalResolverImpl;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,57 +42,51 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private UserService userService;
+
+
     private List<String> urls = new ArrayList<>();
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        //if (session.getAttribute("user") != null && redisUtils.getUserFromRedis(session.getAttribute("user").toString()).equals(session.getAttribute("user"))){
-        //    log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("user"));
-        //    return true;
-        //}else if (session.getAttribute("employee") != null && redisUtils.getUserFromRedis(session.getAttribute("employee").toString()).equals(session.getAttribute("user"))){
-        //    log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("employee"));
-        //    return true;
-        //}else{
-        //    response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
-        //    return false;
-        //}
+        String token = request.getHeader("token");
+        System.out.println("token---->" + token);
+        if (handler instanceof HandlerMethod) {
+
+            if (StringUtils.isEmpty(token)) {
+                response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+                return false;
+                //throw new CustomException("签名验证不存在!");
 
 
+            } else {
+                Claims claims = JwtUtils.validateJWT(token).getClaims();
+                if (claims == null) {
+                    response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
+                    return false;
+                    //throw new CustomException("鉴权失败!");
 
+                } else {
+                    String id = JwtUtils.parseJWT(token).getId();
+                    System.out.println(id+"id");
+                    User byId = this.userService.getById(id);
+                    Employee employee = this.employeeService.getById(id);
+                    if (byId!=null){
+                        UserThreadLocal.put(byId);
+                        return true;
+                    }
+                    if (employee !=null){
+                        EmpThreadLocal.put(employee);
+                        return true;
+                    }
+                    return false;
 
-        //if (session.getAttribute("employee") != null || (session.getAttribute("user") != null)){
-        //    if (session.getAttribute("employee").equals("employee")){
-        //        log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("employee"));
-        //
-        //    }
-        //    if (session.getAttribute("user").equals("user")){
-        //        log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("user"));
-        //    }
-        //
-        //    return true;
-        //}else{
-        //    response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
-        //    return false;
-        //}
-        if (session.getAttribute("employee") != null && redisUtils.isEmployeeInRedis(session.getAttribute("employee").toString())){
-                log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("employee"));
-
-                return true;
-        }
-        if (session.getAttribute("user") != null && redisUtils.isUserInRedis(session.getAttribute("user").toString())){
-            log.info("用户已登录，用户ID为:{}",request.getSession().getAttribute("user"));
+                }
+            }
+        } else {
             return true;
         }
-            response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
-            return false;
-
-
-
-
     }
-
-
-
     public List<String> getUrls(){
 
         urls.add("/employee/login");
@@ -92,6 +95,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         urls.add("/front/**");
         urls.add("/user/sendMsg");
         urls.add("/user/login");
+        urls.add("/user/wxLogin");
+
 
         return urls;
     }

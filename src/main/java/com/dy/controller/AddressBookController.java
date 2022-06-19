@@ -5,6 +5,7 @@ import com.dy.common.R;
 import com.dy.dto.DishDto;
 import com.dy.entity.AddressBook;
 import com.dy.service.AddressBookService;
+import com.dy.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,8 @@ public class AddressBookController {
     @PostMapping
     public R<AddressBook> save(@RequestBody AddressBook addressBook){
 
-        Long userId = (Long) request.getSession().getAttribute("user");
 
+        Long userId = UserThreadLocal.get().getId();
         addressBook.setUserId(userId);
         return addressBookService.saveAddress(addressBook);
     }
@@ -39,8 +40,9 @@ public class AddressBookController {
         addressBookService.UpdateAddressByUserId(addressBook);
         return R.success("修改地址成功！");
     }
-    @DeleteMapping()
+    @DeleteMapping
     public R<String> deleteAddress(Long id){
+
         addressBookService.removeById(id);
         return R.success("删除地址成功！");
     }
@@ -53,7 +55,7 @@ public class AddressBookController {
     @GetMapping("/default")
     public R<AddressBook> getDefaultById(){
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AddressBook::getUserId,request.getSession().getAttribute("user")).eq(AddressBook::getIsDefault,1);
+        queryWrapper.eq(AddressBook::getUserId,UserThreadLocal.get().getId()).eq(AddressBook::getIsDefault,1);
         AddressBook byId = addressBookService.getOne(queryWrapper);
 
         if (byId ==null){

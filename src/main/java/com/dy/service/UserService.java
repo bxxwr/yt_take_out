@@ -25,8 +25,8 @@ public interface UserService extends IService<User> {
     /**
      * 会员分页条件查询
      * @param pageInfo
-     * @param name
+     * @param phone
      * @return
      */
-    R<Page> pageQuery(Page pageInfo, String name);
+    R<Page> pageQuery(Page pageInfo, String phone);
 }

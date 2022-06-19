@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.dy.common.R;
 import com.dy.entity.ShoppingCart;
+import com.dy.entity.User;
+
 import com.dy.service.ShoppingCartService;
+import com.dy.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +35,9 @@ public class ShoppingCartController {
 
     @GetMapping("/list")
     public R<List<ShoppingCart>> list(){
+        Long id = UserThreadLocal.get().getId();
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,request.getSession().getAttribute("user"));
+        queryWrapper.eq(ShoppingCart::getUserId,id);
         queryWrapper.orderByAsc(ShoppingCart::getCreateTime);
         List<ShoppingCart> list = shoppingCartService.list(queryWrapper);
 
@@ -42,15 +46,17 @@ public class ShoppingCartController {
 
     @DeleteMapping("/clean")
     public R<String> clean(){
+        Long id = UserThreadLocal.get().getId();
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,request.getSession().getAttribute("user"));
+        queryWrapper.eq(ShoppingCart::getUserId,id);
         shoppingCartService.remove(queryWrapper);
         return R.success("清空购物车成功！");
     }
 
     @PostMapping("/sub")
     public R<ShoppingCart> changeNumber(@RequestBody ShoppingCart shoppingCart){
-        Long userId = (Long) request.getSession().getAttribute("user");
+        User userInfo = UserThreadLocal.get();
+        Long userId = userInfo.getId();
 
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(shoppingCart.getDishId() != null,ShoppingCart::getDishId,shoppingCart.getDishId());

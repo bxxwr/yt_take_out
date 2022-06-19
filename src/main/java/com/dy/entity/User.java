@@ -37,11 +37,19 @@ public class User implements Serializable {
 
 
     //头像
-    private String avatar;
+    private String avatarUrl; // 用户头像图片的 URL
 
 
     //状态 0:禁用，1:正常
     private Integer status;
+
+    private String openid; // 用户唯一标识
+
+    private String nickName; // 用户昵称
+
+
+    @TableField(select = false,exist = false)
+    private String code; // 微信用户code 前端传来的
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

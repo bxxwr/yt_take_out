@@ -85,7 +85,7 @@
         <el-table-column prop="image" label="图片"  align="center"
                          align="center">
           <template slot-scope="{ row }">
-            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ `/common/download?name=${row.image}` ]" >
+            <el-image style="width: auto; height: 40px; border:none;cursor: pointer;" :src="getImage(row.image)" :preview-src-list="[ QiNiuYunUrl+row.image ]" >
               <div slot="error" class="image-slot">
                 <img src="./../../images/noImg.png"  style="width: auto; height: 40px; border:none;" >
               </div> 
@@ -172,13 +172,14 @@
     <!-- 引入axios -->
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
+   <script src="../../js/common.js"></script>
     <script src="../../api/combo.js"></script>
     <script>
       new Vue({
         el: '#combo-app',
         data() {
           return {
-            QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
+            QiNiuYunUrl: QiniuUrl,
              input: '',
              counts: 0,
              page: 1,
@@ -222,13 +223,13 @@
           addSetMeal (st) {
             if (st === 'add'){
               window.parent.menuHandle({
-                id: '5',
+                id: '6',
                 url: '/backend/page/combo/add.html',
                 name: '添加套餐'
               },true)
             } else {
               window.parent.menuHandle({
-                id: '5',
+                id: '6',
                 url: '/backend/page/combo/add.html?id='+st,
                 name: '修改套餐'
               },true)

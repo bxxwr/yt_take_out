@@ -27,7 +27,7 @@ function orderPagingApi(data) {
 //再来一单
 function orderAgainApi(data) {
   return $axios({
-      'url': '/order/again',
+      'url': '/order/userPage',
       'method': 'post',
       data
   })

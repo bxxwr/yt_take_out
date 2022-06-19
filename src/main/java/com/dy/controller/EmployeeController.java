@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dy.common.R;
 import com.dy.entity.Employee;
-import com.dy.entity.User;
 import com.dy.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 
 @Slf4j
@@ -23,7 +23,7 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/login")
-    public R<Employee> login(@RequestBody Employee employee, HttpServletRequest request){
+    public R<HashMap<String, Object>> login(@RequestBody Employee employee, HttpServletRequest request){
 
         return employeeService.login(employee,request);
     }

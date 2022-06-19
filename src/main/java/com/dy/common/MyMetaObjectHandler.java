@@ -1,6 +1,10 @@
 package com.dy.common;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.dy.utils.JwtUtils;
+import com.dy.utils.UserThreadLocal;
+import io.jsonwebtoken.Claims;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,66 +25,77 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     /**
      * 插入操作，自动填充
+     *
      * @param metaObject
      */
+    @SneakyThrows
     @Override
     public void insertFill(MetaObject metaObject) {
-        if (metaObject.hasSetter("createTime")){
+        String token = request.getHeader("token");
+
+            Claims claims = JwtUtils.parseJWT(token);
+        Long id = Long.valueOf(claims.getId());
+
+        if (metaObject.hasSetter("createTime")) {
             metaObject.setValue("createTime", LocalDateTime.now());
         }
-        if (metaObject.hasSetter("updateTime")){
-            metaObject.setValue("updateTime",LocalDateTime.now());
+        if (metaObject.hasSetter("updateTime")) {
+            metaObject.setValue("updateTime", LocalDateTime.now());
         }
-        if (request.getSession().getAttribute("employee") != null ){
-            if (metaObject.hasSetter("createUser")){
-                metaObject.setValue("createUser",request.getSession().getAttribute("employee"));
-            }
-            if (metaObject.hasSetter("updateUser")){
-                metaObject.setValue("updateUser",request.getSession().getAttribute("employee"));
-            }
 
+        if (metaObject.hasSetter("createUser")) {
+            metaObject.setValue("createUser", id);
         }
-        if (request.getSession().getAttribute("user")!= null){
-            if (metaObject.hasSetter("createUser")){
-                metaObject.setValue("createUser",request.getSession().getAttribute("user"));
-            }
-            if (metaObject.hasSetter("updateUser")){
-                metaObject.setValue("updateUser",request.getSession().getAttribute("user"));
-            }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", id);
         }
+
+
+        if (metaObject.hasSetter("createUser")) {
+            metaObject.setValue("createUser", id);
+        }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", id);
+        }
+
 
     }
 
     /**
-     *更新操作，自动填充
+     * 更新操作，自动填充
+     *
      * @param metaObject
      */
+    @SneakyThrows
     @Override
     public void updateFill(MetaObject metaObject) {
+        String token = request.getHeader("token");
 
-        if (metaObject.hasSetter("createTime")){
+        Claims claims = JwtUtils.parseJWT(token);
+        Long id = Long.valueOf(claims.getId());
+
+        if (metaObject.hasSetter("createTime")) {
             metaObject.setValue("createTime", LocalDateTime.now());
         }
 
-        if (metaObject.hasSetter("updateTime")){
-            metaObject.setValue("updateTime",LocalDateTime.now());
+        if (metaObject.hasSetter("updateTime")) {
+            metaObject.setValue("updateTime", LocalDateTime.now());
         }
-        if (request.getSession().getAttribute("employee") != null ){
-            if (metaObject.hasSetter("createUser")){
-                metaObject.setValue("createUser",request.getSession().getAttribute("employee"));
-            }
-            if (metaObject.hasSetter("updateUser")){
-                metaObject.setValue("updateUser",request.getSession().getAttribute("employee"));
-            }
 
+        if (metaObject.hasSetter("createUser")) {
+            metaObject.setValue("createUser", id);
         }
-        if (request.getSession().getAttribute("user")!= null){
-            if (metaObject.hasSetter("createUser")){
-                metaObject.setValue("createUser",request.getSession().getAttribute("user"));
-            }
-            if (metaObject.hasSetter("updateUser")){
-                metaObject.setValue("updateUser",request.getSession().getAttribute("user"));
-            }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", id);
         }
+
+
+        if (metaObject.hasSetter("createUser")) {
+            metaObject.setValue("createUser", id);
+        }
+        if (metaObject.hasSetter("updateUser")) {
+            metaObject.setValue("updateUser", id);
+        }
+
     }
 }

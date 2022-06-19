@@ -229,6 +229,7 @@
               <el-upload
                 class="avatar-uploader"
                 action="/common/upload"
+                :headers="headerObj"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :on-change="onChange"
@@ -362,6 +363,7 @@
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
     <script src="../../api/combo.js"></script>
+    <script src="../../js/common.js"></script>
     <script src="../../js/validate.js"></script>
     <script src="../../js/index.js"></script>
     <script src="../../api/food.js"></script>
@@ -370,7 +372,10 @@
         el: '#combo-add-app',
         data() {
           return {
-            QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
+            headerObj: {
+              token:localStorage.getItem("token")
+            },
+            QiNiuYunUrl:QiniuUrl,
             id: '',
             actionType: '',
             value: '',
@@ -635,7 +640,7 @@
           goBack() {
             window.parent.menuHandle(
               {
-                id: '5',
+                id: '6',
                 url: '/backend/page/combo/list.html',
                 name: '套餐管理',
               },

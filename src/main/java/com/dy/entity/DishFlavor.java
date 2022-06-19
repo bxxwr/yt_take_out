@@ -30,6 +30,9 @@ public class DishFlavor implements Serializable {
     //口味数据list
     private String value;
 
+    @TableField(select = false,exist = false)
+    private String dishFlavor;
+
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

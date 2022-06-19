@@ -85,7 +85,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public R<String> logout() {
 
-
         Long userId = (Long)request.getSession().getAttribute("user");
         redisUtils.deleteUserFromRedis(userId.toString());
         request.getSession().removeAttribute("user");
@@ -95,14 +94,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void updateUserById(User user) {
         userMapper.updateById(user);
-        String avatar = user.getAvatar();
+        String avatar = user.getAvatarUrl();
         redisUtils.save2Db(avatar);
     }
 
     @Override
-    public R<Page> pageQuery(Page pageInfo, String name) {
+    public R<Page> pageQuery(Page pageInfo, String phone) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotEmpty(name),User::getName,name);
+        queryWrapper.like(StringUtils.isNotEmpty(phone),User::getPhone,phone);
         queryWrapper.orderByDesc(User::getCreateTime);
         userMapper.selectMapsPage(pageInfo,queryWrapper);
         return R.success(pageInfo);

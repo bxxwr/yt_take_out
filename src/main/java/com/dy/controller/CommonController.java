@@ -24,6 +24,7 @@ public class CommonController {
     @Resource
     private RedisUtils redisUtils;
 
+
     @PostMapping("/upload")
     public R<String> upload(MultipartFile file){
         //原始文件名
@@ -34,6 +35,7 @@ public class CommonController {
         String fileName = UUID.randomUUID().toString() + extention;
         try {
             //将文件上传到七牛云服务器
+
             QiniuUtils.upload2Qiniu(file.getBytes(),fileName);
             //jedisPool.getResource().sadd(RedisConstant.FOOD_PIC_RESOURCES,fileName);
             redisUtils.save2Qiniu(fileName);

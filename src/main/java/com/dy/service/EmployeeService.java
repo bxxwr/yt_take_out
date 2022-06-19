@@ -6,6 +6,7 @@ import com.dy.common.R;
 import com.dy.entity.Employee;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 public interface EmployeeService extends IService<Employee> {
 
@@ -15,7 +16,7 @@ public interface EmployeeService extends IService<Employee> {
      * @param request
      * @return
      */
-    R<Employee> login(Employee employee, HttpServletRequest request);
+    R<HashMap<String, Object>> login(Employee employee, HttpServletRequest request);
 
     /**
      * 退出

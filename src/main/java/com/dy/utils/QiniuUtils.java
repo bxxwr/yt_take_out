@@ -1,5 +1,6 @@
 package com.dy.utils;
 
+import com.dy.common.QiniuProperties;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -9,17 +10,34 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 七牛云工具类
  */
-
+@Component
 public class QiniuUtils {
-    public  static String accessKey = "你的七牛云accesskey";
-    public  static String secretKey = "你的七牛云secretkey";
-    public  static String bucket = "空间名称";
 
-    public static void upload2Qiniu(String filePath,String fileName){
+    public  static String accessKey ;
+    public  static String secretKey ;
+    public  static String bucket ;
+
+    @Value("${qiniu.accessKey}")
+    public  void setAccessKey(String accessKey) {
+        QiniuUtils.accessKey = accessKey;
+    }
+    @Value("${qiniu.secretKey}")
+    public  void setSecretKey(String secretKey) {
+        QiniuUtils.secretKey = secretKey;
+    }
+    @Value("${qiniu.bucket}")
+    public  void setBucket(String bucket) {
+        QiniuUtils.bucket = bucket;
+    }
+
+    public static void upload2Qiniu(String filePath, String fileName){
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Region.region2());
         UploadManager uploadManager = new UploadManager(cfg);
@@ -41,6 +59,8 @@ public class QiniuUtils {
 
     //上传文件
     public static void upload2Qiniu(byte[] bytes, String fileName){
+        System.out.println(accessKey);
+        System.out.println(secretKey);
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Region.region2());
         //...其他参数参考类注释

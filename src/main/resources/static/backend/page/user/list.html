@@ -22,7 +22,7 @@
       <div class="tableBar">
         <el-input
           v-model="input"
-          placeholder="请输入会员姓名"
+          placeholder="请输入会员手机号"
           style="width: 250px"
           clearable
            @keyup.enter.native="handleQuery"
@@ -49,8 +49,8 @@
       >
         <el-table-column
                 align="center"
-          prop="name"
-          label="会员姓名"
+          prop="id"
+          label="会员ID"
         ></el-table-column>
 
         <el-table-column
@@ -69,6 +69,11 @@
            prop="id_number"
            align="center"
            label="身份证号"
+        ></el-table-column>
+        <el-table-column
+                prop="nick_name"
+                align="center"
+                label="昵称"
         ></el-table-column>
         <el-table-column label="账号状态">
           align="center"
@@ -165,7 +170,7 @@
             const params = {
               page: this.page,
               pageSize: this.pageSize,
-              name: this.input ? this.input : undefined
+              phone: this.input ? this.input : undefined
             }
             await getUserList(params).then(res => {
               if (String(res.code) === '1') {
@@ -188,13 +193,13 @@
               window.parent.menuHandle({
                 id: '2',
                 url: '/backend/page/user/add.html',
-                name: '添加员工'
+                name: '添加会员'
               },true)
             } else {
               window.parent.menuHandle({
                 id: '2',
                 url: '/backend/page/user/add.html?id='+st,
-                name: '修改员工'
+                name: '修改会员'
               },true)
             }
           },

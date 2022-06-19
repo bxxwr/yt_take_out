@@ -188,6 +188,7 @@
           >
             <el-upload
               class="avatar-uploader"
+              :headers="headerObj"
               action="/common/upload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
@@ -251,6 +252,7 @@
     <!-- 引入axios -->
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
+   <script src="../../js/common.js"></script>
     <script src="../../js/validate.js"></script>
     <script src="../../js/index.js"></script>
     <script src="../../api/food.js"></script>
@@ -259,7 +261,10 @@
         el: '#food-add-app',
         data() {
           return {
-            QiNiuYunUrl:'http://rafqqxzvc.hn-bkt.clouddn.com/',
+            headerObj: {
+              token:localStorage.getItem("token")
+            },
+            QiNiuYunUrl:QiniuUrl,
             id: '',
             restKey: 0,
             textarea: '',
@@ -521,6 +526,8 @@
 
               this.imageUrl = this.QiNiuYunUrl+response.data
               this.ruleForm.image = response.data
+              console.log("imageUrl",this.imageUrl)
+              console.log("image",this.ruleForm.image)
             }
           },
 
@@ -543,7 +550,7 @@
           
           goBack(){
             window.parent.menuHandle({
-              id: '4',
+              id: '5',
               url: '/backend/page/food/list.html',
               name: '菜品管理'
             },false)

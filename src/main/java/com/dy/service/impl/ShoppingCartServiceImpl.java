@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dy.common.R;
 import com.dy.entity.ShoppingCart;
+import com.dy.entity.User;
+
 import com.dy.mapper.ShoppingCartMapper;
 import com.dy.service.ShoppingCartService;
+import com.dy.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,9 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
 
     @Override
     public R<ShoppingCart> add2shoppingCart(ShoppingCart shoppingCart) {
-        Long userId = (Long) request.getSession().getAttribute("user");
+        //Long userId = (Long) request.getSession().getAttribute("user");
+        User userInfo = UserThreadLocal.get();
+        Long userId = userInfo.getId();
         shoppingCart.setUserId(userId);
         //查询当前菜品或者套餐是否在购物车中
         Long dishId = shoppingCart.getDishId();

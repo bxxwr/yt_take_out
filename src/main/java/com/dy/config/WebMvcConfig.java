@@ -39,8 +39,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //        "backend/images/**"
         //);
         registration.excludePathPatterns(getLoginInterceptor().getUrls());
-
-
     }
 
     /**

@@ -11,7 +11,10 @@ import com.dy.dto.OrdersDto;
 import com.dy.entity.*;
 import com.dy.exception.CustomException;
 import com.dy.mapper.*;
+import com.dy.service.OrderDetailService;
 import com.dy.service.OrderService;
+import com.dy.utils.UserThreadLocal;
+import com.google.common.util.concurrent.AtomicDouble;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,10 +43,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     private OrderMapper orderMapper;
     @Autowired
     private OrderDetailMapper orderDetailMapper;
+    @Autowired
+    private OrderDetailService orderDetailService;
+
+
     @Override
     public void submit(Orders orders) {
         //获得当前用户id
-        Long userId = (Long) request.getSession().getAttribute("user");
+        Long userId = UserThreadLocal.get().getId();
 
         //查询当前用户购物车数据
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
@@ -62,41 +70,41 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
         //向订单表插入数据，一条数据
         long orderId = IdWorker.getId();
-        AtomicInteger amount = new AtomicInteger(0);
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        for (ShoppingCart shoppingCart : shoppingCarts) {
+        AtomicDouble amount = new AtomicDouble(0);
+
+        List<OrderDetail> orderDetails = shoppingCarts.stream().map((item) -> {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderId(orderId);
-            orderDetail.setNumber(shoppingCart.getNumber());
-            orderDetail.setDishFlavor(shoppingCart.getDishFlavor());
-            orderDetail.setDishId(shoppingCart.getDishId());
-            orderDetail.setSetmealId(shoppingCart.getSetmealId());
-            orderDetail.setName(shoppingCart.getName());
-            orderDetail.setImage(shoppingCart.getImage());
-            orderDetail.setAmount(shoppingCart.getAmount());
-            amount.addAndGet(shoppingCart.getAmount().multiply(new BigDecimal(shoppingCart.getNumber())).intValue());
-            orderDetailMapper.insert(orderDetail);
+            orderDetail.setNumber(item.getNumber());
+            orderDetail.setDishFlavor(item.getDishFlavor());
+            orderDetail.setDishId(item.getDishId());
+            orderDetail.setSetmealId(item.getSetmealId());
+            orderDetail.setName(item.getName());
+            orderDetail.setImage(item.getImage());
+            orderDetail.setAmount(item.getAmount());
+            amount.addAndGet(item.getAmount().multiply(new BigDecimal(item.getNumber())).doubleValue());
+            return orderDetail;
+        }).collect(Collectors.toList());
 
-        }
+
         orders.setId(orderId);
         orders.setOrderTime(LocalDateTime.now());
         orders.setCheckoutTime(LocalDateTime.now());
         orders.setStatus(2);
-        orders.setAmount(new BigDecimal(amount.get()));
+        orders.setAmount(new BigDecimal(amount.get()));//总金额
         orders.setUserId(userId);
         orders.setNumber(String.valueOf(orderId));
         orders.setUserName(user.getName());
         orders.setConsignee(addressBook.getConsignee());
         orders.setPhone(addressBook.getPhone());
-        orders.setAddress((addressBook.getProvinceName() == null ? "":addressBook.getProvinceName())
-                           +(addressBook.getCityName() == null ? "":addressBook.getCityName())
-                           +(addressBook.getDistrictName() == null ? "":addressBook.getDistrictName())
-                           +(addressBook.getDetail())
-        );
+        orders.setAddress((addressBook.getProvinceName() == null ? "" : addressBook.getProvinceName())
+                + (addressBook.getCityName() == null ? "" : addressBook.getCityName())
+                + (addressBook.getDistrictName() == null ? "" : addressBook.getDistrictName())
+                + (addressBook.getDetail() == null ? "" : addressBook.getDetail()));
         orderMapper.insert(orders);
 
         //向订单明细表插入数据，多条数据
-
+        orderDetailService.saveBatch(orderDetails);
 
 
         //清空购物车数据
@@ -123,7 +131,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             User user = userMapper.selectById(userId);
 
             if (user != null){
-                String name = user.getName();
+                String name = user.getNickName();
                 ordersDto.setUserName(name);
             }
             ordersDtoList.add(ordersDto);
@@ -132,13 +140,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         return R.success(ordersDtoPage);
     }
     @Override
-    public R<Page> userPage(Page pageInfo) {
+        public R<Page> userPage(Page pageInfo) {
 
         try {
             Page<OrdersDto> dtoPage = new Page<>();
             LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.orderByDesc(Orders::getOrderTime);
-            queryWrapper.eq(Orders::getUserId,request.getSession().getAttribute("user"));
+            queryWrapper.eq(Orders::getUserId,UserThreadLocal.get().getId());
             orderMapper.selectPage(pageInfo,queryWrapper);
             BeanUtils.copyProperties(pageInfo,dtoPage,"records");
             List<Orders> records = pageInfo.getRecords();
@@ -155,7 +163,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
                 User user = userMapper.selectById(userId);
 
                 if (user != null){
-                    String name = user.getName();
+                    String name = user.getNickName();
                     ordersDto.setUserName(name);
                 }
                 ordersDtoList.add(ordersDto);
@@ -234,17 +242,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         LocalDate startDay = LocalDate.now().plusDays(-7);
 
         Map<String,Object> map = new HashMap<>();
-        List<Long> amount = new ArrayList<>();
+        List<Double> amount = new ArrayList<>();
         List<LocalDate> days = new ArrayList<>();
         for (int i = 0;i<7;i++){
             LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.between(Orders::getOrderTime,start,end);
             List<Orders> orders = orderMapper.selectList(queryWrapper);
-            int orderAmount = 0;
+            double orderAmount = 0;
             for (Orders order : orders) {
-                orderAmount += order.getAmount().intValue();
+                orderAmount += order.getAmount().doubleValue();
             }
-            amount.add((long) orderAmount);
+            amount.add(orderAmount);
             start = start.plusDays(1);
             end = end.plusDays(1);
             days.add(startDay);

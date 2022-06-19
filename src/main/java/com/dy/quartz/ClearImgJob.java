@@ -16,6 +16,7 @@ public class ClearImgJob extends QuartzJobBean {
     @Autowired
     private RedisTemplate redisTemplate;
 
+
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         Set<String> set = redisTemplate.opsForSet().difference(RedisConstant.FOOD_PIC_RESOURCES, RedisConstant.FOOD_PIC_DB_RESOURCES);

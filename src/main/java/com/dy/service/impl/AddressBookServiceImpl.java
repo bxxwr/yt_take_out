@@ -7,6 +7,7 @@ import com.dy.common.R;
 import com.dy.entity.AddressBook;
 import com.dy.mapper.AddressBookMapper;
 import com.dy.service.AddressBookService;
+import com.dy.utils.UserThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class AddressBookServiceImpl extends ServiceImpl<AddressBookMapper, Addre
     private HttpServletRequest request;
     @Override
     public R<List<AddressBook>> findAddressByUserId(AddressBook addressBook) {
-        addressBook.setUserId((Long) request.getSession().getAttribute("user"));
+        addressBook.setUserId(UserThreadLocal.get().getId());
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(addressBook.getUserId()!=null,AddressBook::getUserId,addressBook.getUserId());
         queryWrapper.orderByDesc(AddressBook::getUpdateTime);
@@ -46,7 +47,7 @@ public class AddressBookServiceImpl extends ServiceImpl<AddressBookMapper, Addre
 
     @Override
     public void setDefaultAddress(AddressBook addressBook) {
-        Long userId = (Long) request.getSession().getAttribute("user");
+        Long userId = UserThreadLocal.get().getId();
         LambdaUpdateWrapper<AddressBook> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(AddressBook::getUserId,userId);
         updateWrapper.set(AddressBook::getIsDefault,0);
