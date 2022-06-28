@@ -130,10 +130,15 @@ public class UserController {
         System.out.println(phoneNumber);
         System.out.println("UserId" + UserThreadLocal.get().getId());
         User byId = userService.getById(UserThreadLocal.get().getId());
-        if (!byId.getPhone().equals(phoneNumber)){
+        log.info(byId.getPhone());
+        if(StringUtils.isEmpty(byId.getPhone())){
             byId.setPhone(phoneNumber);
             userService.updateById(byId);
         }
+        //if (!byId.getPhone().equals(phoneNumber)){
+        //    byId.setPhone(phoneNumber);
+        //    userService.updateById(byId);
+        //}
 
 
 
