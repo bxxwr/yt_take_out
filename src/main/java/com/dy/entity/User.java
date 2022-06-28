@@ -51,6 +51,6 @@ public class User implements Serializable {
     @TableField(select = false,exist = false)
     private String code; // 微信用户code 前端传来的
 
-    @TableField(fill = FieldFill.INSERT)
+
     private LocalDateTime createTime;
 }
